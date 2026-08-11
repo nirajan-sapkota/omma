@@ -1,48 +1,153 @@
 @extends('layouts.app')
 
-@section('title', 'Booking confirmed — Omma Health Center')
+@section('title', 'Booking Confirmed — Omma Health Center')
 
 @section('content')
-<section class="view compact">
-  <div class="container confirm-wrap">
-    <div class="confirm-check">✓</div>
-    <h2 style="margin-bottom:6px;">You're booked</h2>
-    <p style="margin-bottom:28px;">{{ $booking->service_name }} · {{ $booking->formatted_date }} · {{ $booking->formatted_time }}</p>
 
-    @if ($booking->is_online)
-      <div class="meet-box">
-        <div class="meet-label">Google Meet link</div>
-        <div class="meet-link-row">
-          <code>{{ $booking->meet_link }}</code>
-          <a href="https://{{ $booking->meet_link }}" target="_blank" rel="noreferrer">Copy / open</a>
+<div class="confirmation-page">
+
+    <div class="confirmation-icon">
+        ✓
+    </div>
+
+    <span class="eyebrow">Appointment confirmed</span>
+
+    <h1>Your appointment is booked!</h1>
+
+    <p class="confirmation-message">
+        Your biometric and physical ability assessment has been successfully scheduled.
+    </p>
+
+    <div class="booking-card">
+
+        <div class="booking-card-header">
+            <div>
+                <span class="small-label">SERVICE</span>
+                <h3>{{ $booking->service_name }}</h3>
+            </div>
+
+            <span class="status-badge">
+                {{ ucfirst($booking->status) }}
+            </span>
         </div>
-        <a href="https://{{ $booking->meet_link }}" target="_blank" rel="noreferrer" class="btn btn-primary btn-block">Join meeting →</a>
-      </div>
-    @else
-      <div class="address-box">
-        <div class="addr-label">Clinic location</div>
-        <p style="margin:0; color:var(--ink);">{{ $address }}</p>
-      </div>
-    @endif
 
-    @php
-      [$h, $m] = array_map('intval', explode(':', $booking->appointment_time));
-      $start = $booking->appointment_date->copy()->setTime($h, $m);
-      $end = $start->copy()->addMinutes(30);
-      $details = $booking->is_online
-          ? 'Video visit with Omma Health Center. Join: https://' . $booking->meet_link
-          : 'In-person visit at ' . $address . '.';
-      $calendarUrl = 'https://calendar.google.com/calendar/render?' . http_build_query([
-          'action' => 'TEMPLATE',
-          'text' => 'Omma Health Center — ' . $booking->service_name,
-          'dates' => $start->utc()->format('Ymd\THis\Z') . '/' . $end->utc()->format('Ymd\THis\Z'),
-          'details' => $details,
-          'location' => $booking->is_online ? ('https://' . $booking->meet_link) : $address,
-      ]);
-    @endphp
+        <div class="booking-details">
 
-    <a href="{{ $calendarUrl }}" target="_blank" rel="noreferrer" class="btn btn-outline btn-block" style="margin-bottom:14px;">Add to Google Calendar</a>
-    <a href="{{ route('dashboard') }}" class="btn btn-ghost">Back to dashboard</a>
-  </div>
-</section>
+            <div class="detail">
+                <span class="detail-icon">📅</span>
+                <div>
+                    <span class="detail-label">Date</span>
+                    <strong>
+                        {{ $booking->appointment_date->format('l, F j, Y') }}
+                    </strong>
+                </div>
+            </div>
+
+            <div class="detail">
+                <span class="detail-icon">🕐</span>
+                <div>
+                    <span class="detail-label">Time</span>
+                    <strong>
+                        {{ \Carbon\Carbon::parse($booking->appointment_time)->format('g:i A') }}
+                    </strong>
+                </div>
+            </div>
+
+            <div class="detail">
+                <span class="detail-icon">
+                    {{ $booking->category === 'online' ? '🎥' : '📍' }}
+                </span>
+
+                <div>
+                    <span class="detail-label">Appointment type</span>
+
+                    <strong>
+                        {{ $booking->category === 'online' ? 'Online appointment' : 'In-person appointment' }}
+                    </strong>
+                </div>
+            </div>
+
+            <div class="detail">
+                <span class="detail-icon">🧾</span>
+
+                <div>
+                    <span class="detail-label">Payment Status</span>
+
+                    <strong>
+                        {{ ucfirst($booking->payment_status ?? 'pending') }} Verification
+                    </strong>
+
+                    @if ($booking->payment_receipt_url)
+                        <div>
+                            <a href="{{ $booking->payment_receipt_url }}" target="_blank" style="font-size: 12px; color: #0f766e; font-weight: 700; text-decoration: none;">
+                                View Uploaded Receipt ↗
+                            </a>
+                        </div>
+                    @endif
+                </div>
+            </div>
+
+        </div>
+
+        @if ($booking->category === 'online')
+
+            <div class="online-box">
+
+                <div>
+                    <span class="detail-label">Google Meet</span>
+
+                    <p>
+                        Your online appointment will take place through Google Meet.
+                    </p>
+                </div>
+
+                @if ($booking->meet_link)
+                    <a
+                        href="https://{{ $booking->meet_link }}"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="btn btn-primary"
+                    >
+                        Join Google Meet →
+                    </a>
+                @endif
+
+            </div>
+
+        @else
+
+            <div class="location-box">
+
+                <span class="detail-icon">📍</span>
+
+                <div>
+                    <span class="detail-label">Clinic location</span>
+
+                    <strong>{{ $address }}</strong>
+
+                    <p>
+                        Please arrive 10–15 minutes before your appointment.
+                    </p>
+                </div>
+
+            </div>
+
+        @endif
+
+    </div>
+
+    <div class="confirmation-actions">
+
+        <a href="{{ route('dashboard') }}" class="btn btn-primary">
+            View my appointments
+        </a>
+
+        <a href="{{ route('home') }}" class="btn btn-outline">
+            Return home
+        </a>
+
+    </div>
+
+</div>
+
 @endsection

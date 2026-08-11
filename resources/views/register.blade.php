@@ -37,7 +37,24 @@
                  class="{{ $errors->has('email') ? 'is-invalid' : '' }}"
                  placeholder="you@example.com" required>
         </div>
+        <div class="field">
+          <label for="address">Address</label>
+          <input id="address" type="text" name="address" value="{{ old('address') }}"
+                 class="{{ $errors->has('address') ? 'is-invalid' : '' }}"
+                 placeholder="Birendranagar" required>
+        </div>
+        <div class="field">
+          <label for="phone">Phone</label>
+          <input id="phone" type="text" name="phone" value="{{ old('phone') }}"
+                 class="{{ $errors->has('phone') ? 'is-invalid' : '' }}"
+                 placeholder="98XXXXXXXX" required>
+        </div>
+        
+          <label for="gender">Gender</label><br><br>
+          Male<input id="male" type="radio" name="gender" value="male" required>
+          Female<input id="female" type="radio" name="gender" value="Female" required>
 
+        <br><br>
         <div class="field-row" style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
           <div class="field">
             <label for="password">Password</label>

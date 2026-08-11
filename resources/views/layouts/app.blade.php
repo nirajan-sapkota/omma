@@ -256,7 +256,7 @@ input[name="appointment_time"]:checked + .time-slot{border-color:var(--blue-700)
 
 <footer>
   <div class="container">
-    <div>© {{ date('Y') }} Omma Health Center — demo application, not a substitute for professional medical diagnosis.</div>
+    <div>© {{ date('Y') }} Omma Health Center. Providing service since 2022 </div>
     <div><a href="{{ route('register') }}">Book an appointment</a></div>
   </div>
 </footer>
